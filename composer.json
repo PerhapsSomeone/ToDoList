@@ -1,0 +1,6 @@
+{
+  "require": {
+    "sentry/sentry": "^1.9",
+    "google/recaptcha": "^1.1"
+  }
+}

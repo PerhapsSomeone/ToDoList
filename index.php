@@ -13,7 +13,7 @@ require 'vendor/autoload.php';
 ?>
 
 <!DOCTYPE html>
-<html>
+<html class="has-navbar-fixed-top">
 <head>
     <title>To-Do List</title>
     <meta charset="utf-8">
@@ -26,15 +26,40 @@ require 'vendor/autoload.php';
 </head>
 <body>
 
-<nav id="navigation">
+<nav class="navbar is-fixed-top is-transparent">
     <div>
-        <a class="navbar-item" href="https://bulma.io">
+        <a style="float: left" class="header navbar-item" href="index.php">
             <h1 class="header">|To-Do Liste|</h1>
         </a>
     </div>
 </nav>
 
 <div class="center">
+    <form method="post" action="login.php">
+        <label class="text header">Login</label>
+        <div class="field">
+            <p class="control has-icons-left is-centered">
+                <input width="20px" class="input is-medium" type="text" placeholder="Nutzername" name="username">
+                <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+            </span>
+            </p>
+        </div>
+        <div class="field">
+            <p class="control has-icons-left is-centered">
+                <input class="input is-medium" type="password" name="password" placeholder="Passwort">
+                <span class="icon is-small is-left">
+                <i class="fas fa-lock"></i>
+            </span>
+            </p>
+        </div>
+        <div class="g-recaptcha" data-sitekey="6LcLMmQUAAAAACmdKpV3xsTzqKXldlLcy7_p0mAX"></div>
+
+        <button class="button is-success is-centered">
+            Login
+        </button>
+    </form>
+    <br/>
     <form method="post" action="register.php">
         <label class="text header">Login</label>
         <div class="field">
@@ -58,8 +83,6 @@ require 'vendor/autoload.php';
         <button class="button is-success is-centered">
             Login
         </button>
-
-
     </form>
 </div>
 <!--<lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem><lorem></lorem>vv

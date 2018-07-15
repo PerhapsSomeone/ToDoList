@@ -5,34 +5,70 @@
  * Date: 14.07.18
  * Time: 17:48
  */
-
+session_start();
 require "vendor/autoload.php";
 
 class auth
 {
     public static function auth_user($username, $password): bool
     {
+        //if(!self::checkCaptcha()) {
+        //    return false;
+        //}
 
-        if (!isset($_POST["g-recaptcha-response"])) {
-            return false;
-        }
+        $conn = db::getConn();
 
-        $recaptcha = new \ReCaptcha\ReCaptcha("6LcLMmQUAAAAAA5DO22UamyuiNd6GRsW6xDUnAa9");
-        $resp = $recaptcha->verify($_POST["g-recaptcha-response"], $_SERVER["REMOTE_ADDR"]);
-        if ($resp->isSuccess()) {
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->execute([$username]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        $dbpass = $row["password"];
+
+        if (password_verify($password, $dbpass)) {
+            $_SESSION["user"] = array(
+                "username" => $username,
+                "userid" => $row["id"]
+            );
+            return true;
         } else {
             return false;
         }
     }
 
+    public static function checkUserLogin()
+    {
+        if (!isset($_SESSION["user"])) {
+            header("Location: index.php");
+        }
+
+        $conn = db::getConn();
+
+        $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION["user"]["userid"]]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (sizeof($row) === 0 || $row === false) {
+            header("Location: index.php");
+        }
+    }
+
+    public static function checkCaptcha()
+    {
+        $recaptcha = new \ReCaptcha\ReCaptcha("6LcLMmQUAAAAAA5DO22UamyuiNd6GRsW6xDUnAa9");
+        $resp = $recaptcha->verify($_POST["g-recaptcha-response"], $_SERVER["REMOTE_ADDR"]);
+        if ($resp->isSuccess()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public static function register_user($username, $password): bool
     {
 
-        /*if(!isset($_POST["g-recaptcha-response"])) { // If reCaptcha wasnt used, abort.
-            return false;
-        }*/
+        //if(!self::checkCaptcha()) {
+        //    return false;
+        //}
 
         $conn = db::getConn();
 
@@ -124,5 +160,22 @@ class db
         ];
         $pdo = new PDO($dsn, $user, $pass, $opt);
         return $pdo;
+    }
+
+    public static function getTodos(): string
+    {
+        $conn = self::getConn();
+
+        $stmt = $conn->prepare("SELECT * FROM todos WHERE userid = ?");
+        $stmt->execute($_SESSION["user"]["userid"]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function addTodo($content)
+    {
+        $conn = self::getConn();
+
+        $stmt = $conn->prepare("INSERT INTO `todos` (`userid`, `date`, `content`, `done`) VALUES ('?', CURRENT_TIMESTAMP, '?', 'false')");
+        $stmt->execute(array($_SESSION["user"]["userid"], $content));
     }
 }

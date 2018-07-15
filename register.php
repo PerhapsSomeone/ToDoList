@@ -7,5 +7,7 @@
  */
 
 require "classes.php";
-var_dump($_POST);
-var_dump(auth::register_user($_POST["username"], $_POST["password"]));
+
+auth::register_user($_POST["username"], $_POST["password"]);
+
+header("Location: index.php");
